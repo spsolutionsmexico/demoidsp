@@ -1,0 +1,19 @@
+###############################
+# webSDK - Icar Vision        #
+###############################
+ID: 371
+release: DEMO
+version: IcarWSDK_v1-4-13
+start date: 2018/10/08
+expiry date: 2019/01/10
+domains: 
+   - icarvision.com
+   - www.icarvision.com
+   - file://*
+   - localhost*
+   - pruebanmp.azurewebsites.net
+Included modules:
+   - icarFaceCapture: [ Blink ]
+   - icarVideo
+   - icarDocumentCapture
+###############################

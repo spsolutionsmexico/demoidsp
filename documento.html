@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Demo S&P</title>
+
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 640px;
+        }
+        
+        td,
+        th {
+            padding: 8px;
+            color: #333333;
+        }
+        
+        .alert {
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+            opacity: 1;
+            transition: opacity 0.6s;
+            margin-bottom: 15px;
+        }
+        
+        .alert.success {
+            background-color: #4CAF50;
+        }
+        
+        .alert.info {
+            background-color: #2196F3;
+        }
+        
+        .alert.warning {
+            background-color: #ff9800;
+        }
+        
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 42px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .closebtn:hover {
+            color: black;
+        }
+        
+        .awesome {
+            font-size: 25px;
+            -webkit-animation: colorchange 1s infinite alternate;
+        }
+        
+        @-webkit-keyframes colorchange {
+            0% {
+                color: white;
+            }
+            50% {
+                color: #ff6363;
+            }
+        }
+    </style>
+
+    <script async defer src="js/icarSDK_v1-4-13_b371.js?v=1413"></script>
+
+
+</head>
+
+<body align="center">
+    <div class="container">
+        <div class="row">
+            <div class=" offset-md-3 col-md-6 align-items-center">
+                <img src="https://www.gob.mx/cms/uploads/image/file/343483/300517montedepiedad.jpg" align="center" style="width: 50%;
+                    text-align: center;">
+            </div>
+            <div class="col-md-6 align-items-center offset-md-3 space">
+                <h2 class="grey-light">Prueba de Concepto</h2>
+                <br>
+                <br>
+                <h4 class="cherry">Analisis de Identificacion</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-title">
+        <table>
+            <tr>
+                <td id="liveness_message" style="text-align: left; font-size: 20px;"></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td id="fps_message" style="font-size: 15px; text-align: left;">&nbsp;</td>
+                <td id="info_message" style="font-size: 10px; text-align: left;">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+
+
+
+    <div align="center" style="position: relative;">
+        <video id="videoInput" width="640" height="480" autoplay="true"></video>
+    </div>
+
+    <div align="center">
+        <input id="Start" type="button" value="Start" onclick="startFunction();" style="padding: 10px 20px" disabled="true" />
+        <input id="Stop" type="button" value="Stop" onclick="stopFunction();" style="padding: 10px 20px" disabled="true" />
+        <input id="Capture" type="button" value="Capture" onclick="IcarSDK.documentCapture.manualTrigger();" style="visibility: hidden; padding: 10px 20px" />
+        <input id="ChangeCamera" type="button" value="Change Camera" style="visibility: hidden; padding: 10px 20px" onclick="askForChangeCameraFunction();" />
+
+        <br><br>
+        <canvas id="resultImage" align="center"></canvas>
+        <div id="codigo" style="width: 50%; background-color: grey">&nbsp;</div>
+    </div>
+
+
+
+    <script>
+        window.onload = function() {
+
+            var OPTIONS_VIDEO = {
+                modeCapture: IcarSDK.MODE_CAPTURE.DOCUMENT_IDCARD,
+                callBackFeedBackFunction: onFeedBackCallBack
+            }
+            IcarSDK.video.initialize(videoInput, OPTIONS_VIDEO);
+            IcarSDK.video.getNumberOfCameras(onNumCamsReceivedCallback);
+
+            var OPTIONS_DOCUMENTS = {
+                type_document: IcarSDK.TYPE_DOC.IDCARD,
+                messageFpsFunction: msgFramesFunction,
+                MAX_ATTEMPTS: -1,
+                fontText: "bold 50px Arial",
+                colorText: "#c91f28",
+                multiplicationFactorBlurring: 1.0
+            }
+            IcarSDK.documentCapture.create(videoInput, requestFrameCallback, onDocumentResultCallback, OPTIONS_DOCUMENTS);
+
+        }
+
+
+        function messageDocCaptureFeedback(messageDC) {
+            document.getElementById("liveness_message").innerHTML = messageDC.TEXT;
+        }
+
+        function esto(variable) {
+            document.getElementById("codigo").innerHTML = variable;
+        }
+
+
+        function onNumCamsReceivedCallback(numberCams) {
+            if (numberCams > 1) {
+                // show the button because there are more than 1 camera
+                document.getElementById('ChangeCamera').style.visibility = 'visible';
+            }
+        }
+
+        function askForChangeCameraFunction() {
+            IcarSDK.documentCapture.stop(changeCameraFunction);
+            hideButtons_stopMode();
+        }
+
+        function changeCameraFunction() {
+            IcarSDK.video.changeCamera();
+        }
+
+
+        function msgFramesFunction(textInfo) {
+            document.getElementById("fps_message").innerHTML = textInfo;
+        }
+
+
+        // function to do the request of the frame to the video
+        //'onFrameReceivedCallback' must to be the next parameters:
+        // - imageData: frame of the video
+        function requestFrameCallback(onFrameReceivedCallback) {
+            IcarSDK.video.requestFrame(onFrameReceivedCallback);
+
+        }
+
+
+        // Return function that the process will use when it will finish
+        // params:
+        //  - answerResult: property when is stored the result of the process:
+        //				IcarSDK.ResultProcess.OK
+        //				IcarSDK.ResultProcess.FAIL
+        //              IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED
+        //  - modeCapture: mode of the capture:
+        //              IcarSDK.CaptureMode.MANUAL_TRIGGER
+        //              IcarSDK.CaptureMode.AUTO_TRIGGER
+        //  - imageResult: property where is stored the image captured
+        //  - roiPoints: roi of the document on the image (defined by the frame)
+        //  - hashCode: property that contains the hashcode generated from the image
+        //              result and the private key.
+        function onDocumentResultCallback(answerResult, modeCapture, imageResult, roiPoints, hashCode) {
+
+            if (answerResult == IcarSDK.ResultProcess.OK || (answerResult == IcarSDK.ResultProcess.FAIL && modeCapture == IcarSDK.CaptureMode.AUTO_TRIGGER)) {
+
+                //alert(imageResult.width + " - " + imageResult.height)
+
+                var newCanvas = document.createElement('canvas');
+                newCanvas.width = imageResult.width;
+                newCanvas.height = imageResult.height;
+                newCanvas.getContext("2d").putImageData(imageResult, 0, 0);
+
+                var canvasResult = document.getElementById("resultImage")
+                canvasResult.className = videoInput.className;
+                canvasResult.width = videoInput.width;
+                canvasResult.height = (videoInput.videoHeight * videoInput.width) / videoInput.videoWidth;
+                var context = canvasResult.getContext('2d');
+                context.clearRect(0, 0, canvasResult.width, canvasResult.height);
+                context.scale(videoInput.width / Math.max(newCanvas.width, newCanvas.height), videoInput.width / Math.max(newCanvas.width, newCanvas.height));
+                context.drawImage(newCanvas, 0, 0);
+
+                console.log("base64 encoded Image" + newCanvas.toDataURL('image/jpeg').replace('data:image/jpeg;base64,', ''))
+                var data = newCanvas.toDataURL('image/jpeg').replace('data:image/jpeg;base64,', '');
+                console.log('data');
+                console.log("Answer Result", answerResult);
+                console.log("Image Result", imageResult);
+                console.log("Image Result.ImageData", imageResult.data);
+                console.log("roi Points", roiPoints);
+                console.log("hashCode", hashCode);
+
+                esto(data);
+
+                if (modeCapture == IcarSDK.CaptureMode.AUTO_TRIGGER) {
+                    hideButtons_stopMode();
+                    if (answerResult == IcarSDK.ResultProcess.OK) {
+                        setTimeout(function() {
+                            alert("Document captured!");
+                        }, 0);
+                    } else {
+                        setTimeout(function() {
+                            alert("Document captured by STOP function");
+                        }, 0);
+                    }
+                }
+
+            } else if (answerResult == IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED) {
+                alert("Number attempts exceeded!!\nPlease, try again.")
+            } else {
+                alert("OHPSSS!!!, Process stopped")
+            }
+
+        }
+
+
+        // FUNCTION: onFeedBackCallBack
+        // Callback function to be called if there is any problem
+        // executing the webSDK
+        // params:
+        //  - resultFeedBack: property where is indicated the result of 
+        //           the execution. The possible values are:
+        //              IcarSDK.RESULT_VIDEO.OK
+        //              IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES
+        //				IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION
+        //				IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA
+        //				IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER
+        //				IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR
+        function onFeedBackCallBack(resultFeedBack) {
+            switch (resultFeedBack) {
+                case IcarSDK.RESULT_VIDEO.OK:
+                    // Video correctly initialized
+                    document.getElementById("Start").disabled = false;
+                    break;
+                case IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES:
+                    alert("Camera not detected!");
+                    break;
+                case IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION:
+                    alert("Not permissions to use the camera!");
+                    break;
+                case IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA:
+                    alert("Camera is using in other process!");
+                    break;
+                case IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER:
+                    alert("The browser is not compatible!");
+                    break;
+                case IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR:
+                    alert("Unknown error initalizing camera");
+                    break;
+            }
+        }
+
+        function startFunction() {
+
+            var timeWait = 0;
+
+            setTimeout(function() {
+
+                IcarSDK.documentCapture.start();
+                document.getElementById('Capture').style.visibility = 'visible';
+                document.getElementById("Start").disabled = true;
+                document.getElementById("Stop").disabled = false;
+
+            }, timeWait);
+
+
+        }
+
+        function stopFunction() {
+            IcarSDK.documentCapture.stop(true);
+            hideButtons_stopMode();
+        }
+
+
+
+        function hideButtons_stopMode() {
+            document.getElementById('Capture').style.visibility = 'hidden';
+            document.getElementById("Start").disabled = false;
+            document.getElementById("Stop").disabled = true;
+        }
+
+        var close = document.getElementsByClassName("closebtn");
+        for (var i = 0; i < close.length; i++) {
+            close[i].onclick = function() {
+                var div = this.parentElement;
+                div.style.opacity = "0";
+                setTimeout(function() {
+                    div.style.display = "none";
+                }, 600);
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>
