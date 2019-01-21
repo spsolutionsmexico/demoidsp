@@ -7,7 +7,7 @@
          <ws:Pwd>mitekSPS@2018</ws:Pwd>
          <ws:GetDocumentIdForMerging>false</ws:GetDocumentIdForMerging>
          <ws:DocInV2Ex>
-            <ws:Reference>DEMO</ws:Reference>
+            <ws:Reference>DEM</ws:Reference>
             <ws:Activity />
             <ws:Image1>
                <ws:ImageResolution>200</ws:ImageResolution>

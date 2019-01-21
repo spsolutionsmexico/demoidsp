@@ -1,0 +1,434 @@
+1.5.0.0
+--------------------------------------------------------------------------
+# faceCapture
+- Code reorganization to be more efficient.
+- GCS-2171: Bug fixed on devices without gyroscope
+# documentCapture
+- Give feedback to programmer
+# video
+- 
+
+
+1.4.14.0
+--------------------------------------------------------------------------
+# faceCapture
+- Throw an error when it's configured only "head turn check".
+- Bug fixed on template size.
+# documentCapture
+-
+# video
+- Update checkCompatibilityBrowser() to work on Safari.
+
+
+1.4.13.0
+--------------------------------------------------------------------------
+# faceCapture
+- Internal changes: code cleaning.
+# documentCapture
+-
+# video
+- In IcarSDK.MODE_CAPTURE.FACE starts trying 640x480 video resolution.
+
+
+1.4.12.0
+--------------------------------------------------------------------------
+# faceCapture
+- 
+# documentCapture
+-
+# video
+- Added an option parameter to enable the audio of the video.
+
+
+1.4.11.0
+--------------------------------------------------------------------------
+# faceCapture
+- 
+# documentCapture
+- Solved problem on manual document capture.
+# video
+-
+
+
+1.4.10.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. When startLivenessProcess is called after create function.
+# documentCapture
+- Bug fixing. When startDocumentCapture is called after create function.
+# video
+-
+
+
+1.4.9.0
+--------------------------------------------------------------------------
+# faceCapture
+-
+# documentCapture
+-
+# video
+-
+
+
+1.4.8.0
+--------------------------------------------------------------------------
+# faceCapture
+- Code reorganization to be more efficient.
+# documentCapture
+- Code reorganization to be more efficient.
+# video
+- Code reorganization to be more efficient.
+
+
+1.4.7.0
+--------------------------------------------------------------------------
+# faceCapture
+- Adapted to work with the new icarWidget.
+# documentCapture
+- Bug fixing.  In some cases, the top edge was always detected even with any edge.
+# video
+-
+
+
+1.4.6.0
+--------------------------------------------------------------------------
+# faceCapture
+-
+# documentCapture
+- Adjusted the sensitivity of the document captured.
+# video
+- Adapted to work with the new icarWidget.
+
+
+1.4.5.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. The DISABLE_FACE_LIVENESS_CHECK option did not work. 
+# documentCapture
+-
+# video
+-
+
+
+1.4.4.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing.  When the video module is not used and the webSDK returns a small image instead the size defined in the video.
+# documentCapture
+- Bug fixing.  When the video module is not used and the webSDK returns a small image instead the size defined in the video
+# video
+-
+
+
+1.4.3.0
+--------------------------------------------------------------------------
+# faceCapture
+- The FPS now are the mean of the last frames compute.
+# documentCapture
+- Bug fixing. Change camera function didn't work properly.
+# video
+- Bug fixing.  In some cases, the video module didn't work due the minrate parameter.
+
+
+1.4.2.0
+--------------------------------------------------------------------------
+# faceCapture
+-
+# documentCapture
+- Added functionality to get the last frame processed when calling the stop function.
+# video
+-
+
+
+1.4.1.0
+# faceCapture
+- New blinking algorithm. Now is faster and more accurate than the last one.
+# documentCapture
+- Optimized the algorithm to be faster.
+# video
+-
+
+
+1.4.0.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. In mobile devices where the face was not correctly captured in portrait position.
+- Bug fixing and optimization of the blurring test. False positives in front of people with blond hair.
+# documentCapture
+-
+# video
+-
+
+
+1.3.11.0
+--------------------------------------------------------------------------
+# faceCapture
+-
+# documentCapture
+- Added a new parameter 'multiplicationFactorBlurring' to adjust the blurring test.
+# video
+- Bug fixing in some Samsung devices.
+
+
+1.3.10.0
+--------------------------------------------------------------------------
+# faceCapture
+- Refactorization of code.
+# documentCapture
+- The algorithm has been optimized. Now is more efficient and faster (up to 300% in terms of process time).
+- Fixed the choppy problem in iOS devices and Samsung explorer.
+- Improvement of the efficiency of the blurring test.
+# video
+- Optimized the process to select the best resolution.
+
+
+1.3.9.0
+--------------------------------------------------------------------------
+# faceCapture
+- Optimized the new process to capture once the face is detected (no eye detection).
+- Text shown over the canvas is responsive and it adapts to the size.
+- Face detection is optimized in mobile devices.
+# documentCapture
+- Text shown over the canvas is responsive and it adapts to the size.
+# video
+-
+
+
+1.3.8.0
+--------------------------------------------------------------------------
+# faceCapture
+- New configuration to capture once the face is detected (no eye detection).
+# documentCapture
+- The algorithm is more efficient in poor systems.
+# video
+- Resolution is adapted taking in account the process to be done.
+
+
+1.3.7.0
+--------------------------------------------------------------------------
+# faceCapture
+- Fixed the problem that was impossible to return the value UNSUPPORTED_BROWSER. 
+# documentCapture
+-
+# video
+- Last camera of the device is selected by default.
+
+
+1.3.6.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. Solved mirror image problem un Firefox (Android) browser.
+# documentCapture
+- Bug fixing. Solved mirror image problem un Firefox (Android) browser.
+- Bug fixing. With some documents where the contrast in the border is not strong.
+- Bug fixing. Capturing documents in mobile when the image was in vertical.
+# video
+- Bug fixing. Bad selection of camera in mobile when information no information about the browser is available and the mode is DocumentCapture.
+
+
+1.3.5.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. In some cases, the template layout was moved.
+# documentCapture
+- Bug fixing. In some cases, the template layout was moved.
+# video
+-
+
+
+1.3.4.0
+--------------------------------------------------------------------------
+# faceCapture
+-
+# documentCapture
+- Added new parameter to disable the flip of the template image.
+# video
+- Added an optional parameter to enforce enabling/disabling the flip of the video.
+
+
+1.3.3.0
+--------------------------------------------------------------------------
+# faceCapture
+- Added the customization of the position of the info text.
+# documentCapture
+- Added the possibility to add an image template of the document.
+# video
+-
+
+
+1.3.2.0
+--------------------------------------------------------------------------
+# faceCapture
+- Info Messages are returned with a code.
+# documentCapture
+- Minor bug fixing.
+# video
+-
+
+
+1.3.1.0
+--------------------------------------------------------------------------
+# faceCapture
+- Minor bug fixing.
+# documentCapture
+- Minor bug fixing.
+# video
+-
+
+
+1.3.0.0
+--------------------------------------------------------------------------
+# faceCapture
+- Added the customization of the color and font at the template layer.
+- Added an option parameter to define the starting process of the blinking.
+# documentCapture
+- Added the customization of the color and font at the template layer.
+- Bug fixing. When the size of the video was defined in percentage.
+- Bug fixing. A wrong picture was taken after moving the document.
+# video
+- Provides a callback function to get information about the process.
+
+
+1.2.13.0
+--------------------------------------------------------------------------
+# faceCapture
+- New property to fix the distance between the user and the camera using the interocular distance.
+- Improvement on the usability. A message is shown when the process re-starts.
+# documentCapture
+- Optimized the capture process to do it faster. 
+# video
+- Minor bug fixing.
+
+
+1.2.12.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. On Firefox browser (android) the analyzed image was upside down. 
+# documentCapture
+- Bug fixing. The process couldn't stop after a manual capture.
+# video
+- Added compatible with iOS11 (Safari) and macOS High Sierra (Safari).
+
+
+1.2.11.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. Error stopping manually the process.
+- Improved the performance of the process.
+# documentCapture
+- Bug fixing. Changing the camera during the process.
+- Improved the performance of the process.
+# video
+- Bug fixing. Problem in Firefox (Android) where the camera was wrong flipped.
+
+
+1.2.10.0
+--------------------------------------------------------------------------
+# faceCapture
+- New answer when the process is stopped because the number of attempts is done: IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED
+# documentCapture
+- New answer when the process is stopped because the number of attempts is done: IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED
+# video
+- Bug fixing.
+
+
+1.2.9.0
+--------------------------------------------------------------------------
+# faceCapture
+- Encapsulated variables into: Icar, IcarSDK, IcarDoc, IcarVideo.
+- Bug fixing. When HEAD_POSE check process repeat.
+# documentCapture
+- Encapsulated variables into: Icar, IcarSDK, IcarDoc, IcarVideo.
+# video
+- Bug fixing.
+
+
+1.2.8.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. Re-start process after stop issue.
+# documentCapture
+-
+# video
+- Bug fixing.
+
+
+1.2.7.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing.  "Uncaught TypeError: Cannot read property 'FACE_LIVENESS_DONE_OK' of undefined" on faceCapture.stop() issue.
+- Added all modules in one JS. 
+# documentCapture
+- Minor bug fixing.
+# video
+- Bug fixing.
+
+
+1.2.6.0
+--------------------------------------------------------------------------
+# faceCapture
+- Added MAX_ATTEMPTS parameter to faceCapture.
+- Bug fixing. Start-stop-start issue on faceCapture.
+# documentCapture
+- Added MAX_ATTEMPTS parameter to faceCapture.
+# video
+- Bug fixing.
+
+
+1.2.5.0
+--------------------------------------------------------------------------
+# faceCapture
+- Improved eye detection and open/closed eye classification.
+- Improved smile detection.
+- Changes on default messages.
+- Bug fixing. Profile liveness bug.
+- More liveness tests combinations allowed. Only turn-face needs to be combined with others.
+# documentCapture
+- Minor bug fixing.
+# video
+- Bug fixing.
+
+
+1.2.4.0
+--------------------------------------------------------------------------
+# faceCapture
+- Improved algorithm execution speed.
+- Improved blur detection on face algorithm.
+- Removed window.webkitRequestAnimationFrame references.
+# documentCapture
+- Deleted deprecated requestFrame function.
+# video
+- Bug fixing.
+
+
+1.2.3.0
+--------------------------------------------------------------------------
+# faceCapture
+- Solved several display issues.
+- Solved captured frame selection issues.
+- Solved frame flip issue on faceCapture on mobile devices.
+# documentCapture
+- Minor bug fixing.
+# video
+- Implemented flip functionality in front camera.
+
+
+1.2.2.0
+--------------------------------------------------------------------------
+# faceCapture
+- Bug fixing. Template display on faceDetection.
+# documentCapture
+- Changes to have better adaptation of overlays at integration layout.
+# video
+-
+
+
+1.2.1.0
+--------------------------------------------------------------------------
+# faceCapture
+- Changes to have better adaptation of overlays at integration layout.
+# documentCapture
+-
+# video
+-
+

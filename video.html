@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Mitek - Video controller</title>
+		
+	
+	<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 640px;
+	}
+
+	td, th {
+		padding: 8px;
+		color: #333333;
+	}
+	</style>
+		
+	<script async defer src="js/icarSDK_v1-5-0_b440.js?v=150"></script>
+
+	
+</head>
+	<body align="center">
+		<div class="demo-title">
+			<table align="center">
+				<tr>
+					<td style="text-align: left; font-size: 40px;"><strong><span style="color: #000000;">Video test</span></strong></td>
+					<td style="text-align: right;"><img src="./img/mitekLogo.png" alt="mitek_logo"  height="40" /></td>
+				</tr>
+				<tr>
+					<td>
+						<div style="position: relative;">
+			    			<video id="videoInput" width="640" height="480" autoplay="true"></video>
+			    		</div>
+					<td>
+				</tr>		
+				<tr>
+					<td>
+						<input id="Capture" type="button" value="Capture" onclick="getImageFunction();"  style="padding: 10px 20px"/>
+						<input id="Start" type="button" value="Start" onclick="startFunction();" style="padding: 10px 20px"/>
+						<input id="Pause" type="button" value="Pause" onclick="pauseFunction();" style="padding: 10px 20px"/>
+						<input id="Stop" type="button" value="Stop" onclick="stopFunction();"  style="padding: 10px 20px"/>
+						<input id="Video_res" type="button" value="Video resol." onclick="resolutionFunction();" style="padding: 10px 20px"/>
+						<input id="ChangeCamera" type="button" value="Change Camera"  style="visibility: hidden; padding: 10px 20px" onclick="changeCameraFunction();"  />
+					</td>
+				</tr>		
+				<tr>
+					<td>	
+						<canvas id="resultImage" width="640" height="480"></canvas>
+					</td>		
+				</tr>		
+			</table>	
+		</div>		
+
+		<script>
+
+			window.onload = function () {
+
+				
+					
+				var OPTIONS_VIDEO = {
+					modeCapture: IcarSDK.MODE_CAPTURE.DOCUMENT_IDCARD,
+					callBackFeedBackFunction: onFeedBackCallBack
+				}
+
+				IcarSDK.video.initialize(videoInput, OPTIONS_VIDEO);
+				IcarSDK.video.getNumberOfCameras(onNumCamsReceivedCallback);		
+			
+			}
+
+
+			function onNumCamsReceivedCallback(numberCams){
+				if (numberCams>1){
+					// show the button because there are more than 1 camera
+					document.getElementById('ChangeCamera').style.visibility = 'visible';
+				}
+			}
+
+			
+			function getImageFunction(){
+				IcarSDK.video.requestFrame(onFrameReceivedCallback);
+			}
+
+			function startFunction(){
+				if (IcarSDK.video.isInitialized())  {
+					// Paused video
+					IcarSDK.video.start();
+				} else {
+					// Stopped video
+					var OPTIONS_VIDEO = {
+						modeCapture: IcarSDK.MODE_CAPTURE.FACE,
+						callBackFeedBackFunction: onFeedBackCallBack
+					}
+					IcarSDK.video.initialize(videoInput, OPTIONS_VIDEO);				
+				}				
+			}
+
+			function pauseFunction(){
+				IcarSDK.video.pause();
+			}
+
+			function stopFunction(){
+				IcarSDK.video.cleanUp();
+			}
+
+			function changeCameraFunction(){
+				IcarSDK.video.changeCamera();
+			}
+
+			function resolutionFunction(){
+				var auxRes = IcarSDK.video.getResolutionVideo();
+				alert(auxRes.label + 
+					"\nratio: " + auxRes.ratio + 
+					"\nwidth: " + auxRes.width +
+					"\nheight: " + auxRes.height);
+			}
+
+
+			// FUNCTION: onFrameReceivedCallback
+			// Callback function to be called once the frame is received
+			// after a call to IcarSDK.video.requestFrame(onFrameReceivedCallback)
+			// params:
+			//  - imageResult: property where is stored the image captured
+			function onFrameReceivedCallback(imageResult){
+				var canvasResult = document.getElementById("resultImage")
+				canvasResult.className = videoInput.className;
+				canvasResult.width = imageResult.width;
+				canvasResult.height = imageResult.height;
+				var context = canvasResult.getContext('2d'); 
+				context.clearRect(0, 0, canvasResult.width, canvasResult.height);
+				context.putImageData(imageResult, 0, 0);
+			} 
+
+
+			// FUNCTION: onFeedBackCallBack
+			// Callback function to be called if there is any problem
+			// executing the webSDK
+			// params:
+			//  - resultFeedBack: property where is indicated the result of 
+			//           the execution. The possible values are:
+			//              IcarSDK.RESULT_VIDEO.OK
+			//              IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES
+			//				IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION
+			//				IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA
+			//				IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER
+			//				IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR
+			function onFeedBackCallBack(resultFeedBack){
+				switch(resultFeedBack){
+					case IcarSDK.RESULT_VIDEO.OK:
+						// Video correctly initialized
+						break;
+					case IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES:
+						alert("Camera not detected!");
+						break;
+					case IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION:
+						alert("Not permissions to use the camera!");
+						break;
+					case IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA:
+						alert("Camera is using in other process!");
+						break;
+					case IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER:
+						alert("The browser is not compatible!");
+						break;
+					case IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR:
+						alert("Unknown error initalizing camera");
+						break;
+				}
+			}
+
+		</script>
+
+	</body>
+</html>

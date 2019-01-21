@@ -1,247 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <title>Demo S&P</title>
+	<meta charset="utf-8">
+	<title>Mitek - Face capture</title>		
 
 
-    <style>
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 640px;
-        }
-        
-        td,
-        th {
-            padding: 8px;
-            color: #333333;
-        }
-    </style>
+	<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 640px;
+	}
 
-    <script async defer src="js/icarSDK_v1-4-13_b371.js?v=1413"></script>
-
-
+	td, th {
+		padding: 8px;
+		color: #333333;
+	}
+	</style>
+		
+	<script async defer src="js/icarSDK_v1-5-0_b440.js?v=150"></script>
+	
+	
 </head>
+	<body align="center">
 
-<body align="center">
-    <div class="container">
-        <div class="row">
-            <div class=" offset-md-3 col-md-6 align-items-center">
-                <img src="https://www.gob.mx/cms/uploads/image/file/343483/300517montedepiedad.jpg" align="center" style="width: 50%;
-                    text-align: center;">
-            </div>
-            <div class="col-md-6 align-items-center offset-md-3 space">
-                <h2 class="grey-light">Prueba de Concepto</h2>
-                <br>
-                <br>
-                <h4 class="cherry">Prueba de Vida</h4>
-            </div>
-        </div>
-    </div>
-    <div class="demo-title">
-        <table align="center">
+		<div class="demo-title">
+			<table align="center">
+				<tr>
+					<td style="text-align: left; font-size: 40px;"><strong><span style="color: #000000;">Face Capture Demo</span></strong></td>
+					<td style="text-align: right;"><img src="./img/mitekLogo.png" alt="mitek_logo"  height="40" /></td>
+				</tr>
+				<tr>
+					<td id="liveness_message" style="text-align: left; font-size: 20px;">v1.5.0</td>
+					<td id="completionPercentagePhase1" style="font-size: 20px; text-align: right;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td id="percentageOpenEyes" style="font-size: 15px; text-align: right;">&nbsp;</td>
+				</tr>
+				<tr>
+					<td id="fps_message" style="font-size: 15px; text-align: left;">&nbsp;</td>
+					<td id="phase_message" style="font-size: 15px; text-align: right;">&nbsp;</td>
+				</tr>
+				</table>			
+		</div>
 
-            <tr>
-                <td id="liveness_message" style="text-align: left; font-size: 20px;">&nbsp;</td>
-                <td id="completionPercentagePhase1" style="font-size: 20px; text-align: right;">&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td id="percentageOpenEyes" style="font-size: 15px; text-align: right;">&nbsp;</td>
-            </tr>
-            <tr>
-                <td id="fps_message" style="font-size: 15px; text-align: left;">&nbsp;</td>
-                <td id="phase_message" style="font-size: 15px; text-align: right;">&nbsp;</td>
-            </tr>
-        </table>
-    </div>
+		<div style="position: relative;">
+	    	<video id="videoInput" width="640" height="480" autoplay="true"></video>
+	    </div>
 
-    <div style="position: relative;">
-        <video id="videoInput" width="640" height="480" autoplay="true"></video>
-    </div>
+		<div>
+			<input id="Start" type="button" value="Start" onclick="startFunction();" style="padding: 10px 20px" disabled="true"/>
+			<input id="Stop" type="button" value="Stop" onclick="stopFunction();" style="padding: 10px 20px" disabled="true"/>
+			<input id="ChangeCamera" type="button" value="Change Camera"  style="visibility: hidden; padding: 10px 20px" onclick="askForChangeCameraFunction();"  />
+			<br>
+			<canvas id="resultImage" width="640" height="480"></canvas>
+		</div>
 
-    <div>
-        <input id="Start" type="button" value="Start" onclick="startFunction();" style="padding: 10px 20px" disabled="true" />
-        <input id="Stop" type="button" value="Stop" onclick="stopFunction();" style="padding: 10px 20px" disabled="true" />
-        <input id="ChangeCamera" type="button" value="Change Camera" style="visibility: hidden; padding: 10px 20px" onclick="askForChangeCameraFunction();" />
-        <br>
-        <canvas id="resultImage" width="640" height="480"></canvas>
-    </div>
+		 	
+		<script>
+		window.onload = function () {
 
+			var OPTIONS_VIDEO = {
+				modeCapture: IcarSDK.MODE_CAPTURE.FACE,
+				callBackFeedBackFunction: onFeedBackCallBack
+			}
+			IcarSDK.video.initialize(videoInput, OPTIONS_VIDEO);
+			IcarSDK.video.getNumberOfCameras(onNumCamsReceivedCallback);
 
-
-
-
-
-    <script>
-        window.onload = function() {
-
-            var OPTIONS_VIDEO = {
-                modeCapture: IcarSDK.MODE_CAPTURE.FACE,
-                callBackFeedBackFunction: onFeedBackCallBack
-            }
-            IcarSDK.video.initialize(videoInput, OPTIONS_VIDEO);
-            IcarSDK.video.getNumberOfCameras(onNumCamsReceivedCallback);
-
-            var OPTIONS_FACE_CAPTURE = {
-                messageFpsFunction: msgFramesFunction
-            }
-            IcarSDK.faceCapture.create(videoInput, requestFrameCallback, onFaceCaptureResultCallback, OPTIONS_FACE_CAPTURE);
+			var OPTIONS_FACE_CAPTURE = {
+				messageFpsFunction:  msgFramesFunction
+			}		
+			IcarSDK.faceCapture.create(videoInput, requestFrameCallback, onFaceCaptureResultCallback, OPTIONS_FACE_CAPTURE);
 
 
-        }
+		}
 
 
-        function onNumCamsReceivedCallback(numberCams) {
-            if (numberCams > 1) {
-                // show the button because there are more than 1 camera
-                document.getElementById('ChangeCamera').style.visibility = 'visible';
-            }
-        }
+		function onNumCamsReceivedCallback(numberCams){
+			if (numberCams>1){
+				// show the button because there are more than 1 camera
+				document.getElementById('ChangeCamera').style.visibility = 'visible';
+			}
+		}
 
-        function askForChangeCameraFunction() {
-            IcarSDK.faceCapture.stop(changeCameraFunction);
-            hideButtons_stopMode();
-        }
+		function askForChangeCameraFunction(){
+			IcarSDK.faceCapture.stop(changeCameraFunction);
+			hideButtons_stopMode();
+		}
 
-        function changeCameraFunction() {
-            IcarSDK.video.changeCamera();
-        }
-
-        function msgFramesFunction(textInfo) {
-            document.getElementById("fps_message").innerHTML = textInfo;
-        }
-
-
-        // functions to get the information about the process:
-        // Information about the thing that the user have to do
-        function msgFaceCaptureFunction(messageInfo) {
-            document.getElementById("liveness_message").innerHTML = messageInfo.CODE + ": " + messageInfo.TEXT;
-        }
-        // information about the phase that is the process: blinking eyes, smile or turn head
-        function msgPhaseFunction(textInfo) {
-            document.getElementById("phase_message").innerHTML = textInfo;
-        }
-        // information about the progress of the blinking
-        function msgPercentageProcessFunction(textInfo) {
-            document.getElementById("completionPercentagePhase1").innerHTML = textInfo;
-        }
-
-        // function to do the request of the frame to the video
-        //'onFrameReceivedCallback' must to be the next parameters:
-        // - imageData: frame of the video
-        // - hashCode: hashCode of the image
-        function requestFrameCallback(onFrameReceivedCallback) {
-            IcarSDK.video.requestFrame(onFrameReceivedCallback);
-
-        }
+		function changeCameraFunction(){
+			IcarSDK.video.changeCamera();
+		}
+		
+		function msgFramesFunction(textInfo){
+			document.getElementById("fps_message").innerHTML = textInfo;
+		}
 
 
-        // Return function that the process will use when it will finish
-        // params:
-        //  - answerResult: property when is stored the result of the process:
-        //				IcarSDK.ResultProcess.OK
-        //				IcarSDK.ResultProcess.FAIL
-        //              IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED
-        //  - modeCapture: mode of the capture:
-        //              IcarSDK.CaptureMode.MANUAL_TRIGGER
-        //              IcarSDK.CaptureMode.AUTO_TRIGGER
-        //  - imageResult: property where is stored the image captured
-        //  - hashCode: property that contains the hashcode generated from the image
-        //              result and the private key.
-        function onFaceCaptureResultCallback(answerResult, modeCapture, imageResult, hashCode) {
+		// functions to get the information about the process:
+		// Information about the thing that the user have to do
+		function msgFaceCaptureFunction(messageInfo){
+			document.getElementById("liveness_message").innerHTML = messageInfo.CODE + ": " + messageInfo.TEXT;
+		}
+		// information about the phase that is the process: blinking eyes, smile or turn head
+		function msgPhaseFunction(textInfo){
+			document.getElementById("phase_message").innerHTML = textInfo;
+		}
+		// information about the progress of the blinking
+		function msgPercentageProcessFunction(textInfo){
+			document.getElementById("completionPercentagePhase1").innerHTML = textInfo;
+		}
 
-            if (answerResult == IcarSDK.ResultProcess.OK) {
+		// function to do the request of the frame to the video
+		//'onFrameReceivedCallback' must to be the next parameters:
+		// - imageData: frame of the video
+		// - hashCode: hashCode of the image
+		function requestFrameCallback(onFrameReceivedCallback){
+			IcarSDK.video.requestFrame(onFrameReceivedCallback);
 
-                var newCanvas = document.createElement('canvas');
-                newCanvas.width = imageResult.width;
-                newCanvas.height = imageResult.height;
-                newCanvas.getContext("2d").putImageData(imageResult, 0, 0);
-
-                var canvasResult = document.getElementById("resultImage")
-                canvasResult.className = videoInput.className;
-                canvasResult.width = videoInput.width;
-                canvasResult.height = (videoInput.videoHeight * videoInput.width) / videoInput.videoWidth;
-                var context = canvasResult.getContext('2d');
-                context.clearRect(0, 0, canvasResult.width, canvasResult.height);
-                context.scale(videoInput.width / Math.max(newCanvas.width, newCanvas.height), videoInput.width / Math.max(newCanvas.width, newCanvas.height));
-                context.drawImage(newCanvas, 0, 0);
-
-                if (modeCapture == IcarSDK.CaptureMode.AUTO_TRIGGER) {
-                    hideButtons_stopMode();
-                    setTimeout(function() {
-                        alert("Humano vivo!");
-                    }, 0);
-                }
-
-            } else if (answerResult == IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED) {
-                alert("Number attempts exceeded!!\nPlease, try again.")
-            } else {
-                alert("OHPSSS!!!, Process stopped")
-            }
-
-        }
+		}
 
 
-        // FUNCTION: onFeedBackCallBack
-        // Callback function to be called if there is any problem
-        // executing the webSDK
-        // params:
-        //  - resultFeedBack: property where is indicated the result of 
-        //           the execution. The possible values are:
-        //              IcarSDK.RESULT_VIDEO.OK
-        //              IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES
-        //				IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION
-        //				IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA
-        //				IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER
-        //				IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR
-        function onFeedBackCallBack(resultFeedBack) {
-            switch (resultFeedBack) {
-                case IcarSDK.RESULT_VIDEO.OK:
-                    // Video correctly initialized
-                    document.getElementById("Start").disabled = false;
-                    break;
-                case IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES:
-                    alert("Camara no detectada!");
-                    break;
-                case IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION:
-                    alert("No se permitio el uso de la camara!");
-                    break;
-                case IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA:
-                    alert("La camara esta siendo usada por otra tarea!");
-                    break;
-                case IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER:
-                    alert("Navegador no compatible!");
-                    break;
-                case IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR:
-                    alert("Error desconocido al inicializar la camara");
-                    break;
-            }
-        }
+		// Return function that the process will use when it will finish
+		// params:
+		//  - answerResult: property when is stored the result of the process:
+		//				IcarSDK.ResultProcess.OK
+		//				IcarSDK.ResultProcess.FAIL
+		//              IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED
+		//  - modeCapture: mode of the capture:
+		//              IcarSDK.CaptureMode.MANUAL_TRIGGER
+		//              IcarSDK.CaptureMode.AUTO_TRIGGER
+		//  - imageResult: property where is stored the image captured
+		//  - hashCode: property that contains the hashcode generated from the image
+		//              result and the private key.
+		function onFaceCaptureResultCallback(answerResult, modeCapture, imageResult, hashCode){
+
+			if (answerResult == IcarSDK.ResultProcess.OK){
+
+				var newCanvas = document.createElement('canvas');
+				newCanvas.width = imageResult.width;
+				newCanvas.height = imageResult.height;
+				newCanvas.getContext("2d").putImageData(imageResult, 0, 0);
+
+				var canvasResult = document.getElementById("resultImage")
+				canvasResult.className = videoInput.className;
+				canvasResult.width = videoInput.width;
+				canvasResult.height = (videoInput.videoHeight*videoInput.width)/videoInput.videoWidth;
+				var context = canvasResult.getContext('2d'); 
+				context.clearRect(0, 0, canvasResult.width, canvasResult.height);
+				context.scale(videoInput.width/Math.max(newCanvas.width, newCanvas.height), videoInput.width/Math.max(newCanvas.width, newCanvas.height));
+				context.drawImage(newCanvas, 0, 0);
+
+				if (modeCapture == IcarSDK.CaptureMode.AUTO_TRIGGER){
+					hideButtons_stopMode();
+					setTimeout(function(){
+						alert("Face captured!");
+					}, 0);
+				}
+
+			}else if(answerResult == IcarSDK.ResultProcess.ATTEMPTS_EXCEEDED){
+				hideButtons_stopMode();
+				alert("Number attempts exceeded!!\nPlease, try again.");
+			}else{
+				hideButtons_stopMode();
+				alert("OHPSSS!!!, Process stopped");
+			}
+
+		} 
 
 
-        function startFunction() {
+		// FUNCTION: onFeedBackCallBack
+		// Callback function to be called if there is any problem
+		// executing the webSDK
+		// params:
+		//  - resultFeedBack: property where is indicated the result of 
+		//           the execution. The possible values are:
+		//              IcarSDK.RESULT_VIDEO.OK
+		//              IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES
+		//				IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION
+		//				IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA
+		//				IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER
+		//				IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR
+		function onFeedBackCallBack(resultFeedBack){
+			switch(resultFeedBack){
+				case IcarSDK.RESULT_VIDEO.OK:
+					// Video correctly initialized
+					document.getElementById("Start").disabled = false;
+					break;
+				case IcarSDK.RESULT_VIDEO.NO_CAMERA_DEVICES:
+					alert("Camera not detected!");
+					break;
+				case IcarSDK.RESULT_VIDEO.NO_CAMERA_PERMISSION:
+					alert("Not permissions to use the camera!");
+					break;
+				case IcarSDK.RESULT_VIDEO.UNAVAILABLE_CAMERA:
+					alert("Camera is using in other process!");
+					break;
+				case IcarSDK.RESULT_VIDEO.UNSUPPORTED_BROWSER:
+					alert("The browser is not compatible!");
+					break;
+				case IcarSDK.RESULT_VIDEO.UNKNOWN_ERROR:
+					alert("Unknown error initalizing camera");
+					break;
+			}
+		}
 
-            IcarSDK.faceCapture.start();
-            document.getElementById("Start").disabled = true;
-            document.getElementById("Stop").disabled = false;
 
-        }
+		function startFunction(){
+				
+			IcarSDK.faceCapture.start();
+			document.getElementById("Start").disabled = true;
+			document.getElementById("Stop").disabled = false; 
+					
+		}
 
-        function stopFunction() {
-            IcarSDK.faceCapture.stop();
-            hideButtons_stopMode();
-        }
+		function stopFunction(){
+			IcarSDK.faceCapture.stop();
+			hideButtons_stopMode();
+		}
 
-        function hideButtons_stopMode() {
-            document.getElementById("Start").disabled = false;
-            document.getElementById("Stop").disabled = true;
-        }
-    </script>
+		function hideButtons_stopMode(){
+			document.getElementById("Start").disabled = false;
+			document.getElementById("Stop").disabled = true;
+		}
 
+		</script>
+	
 
-</body>
-
+	</body>
 </html>
